@@ -1,33 +1,30 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
 import mongoose from "mongoose";
-import { error } from "console";
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3007;
+const port = 3007;
 
 app.use(express.json());
 app.use(cors());
 
-app.get("/", async (req, res) => {
-    res.json({ message: "hello" });
-});
+import userRoutes from "./Routes/userRoutes";
 
-mongoose.connect(process.env.CONN_STR as string).then(() => {
+app.use("/api/user", userRoutes);
+mongoose
+  .connect(process.env.CONN_STR as string)
+  .then(() => {
     console.log("app is connected to database");
     try {
-    app.listen(port, () => {
+      app.listen(port, () => {
         console.log(`App is listening at port: ${port}`);
-    });
-} catch (error) {
-    console.error("Error starting server:", error);
-}
-
-}).catch((error) => {
-    console.log("error while connecting to database",error)
-})
-
-
-
-
+      });
+    } catch (error) {
+      console.error("Error starting server:", error);
+    }
+  })
+  .catch((error) => {
+    console.log("error while connecting to database", error);
+  });
